@@ -3,36 +3,11 @@ import sys
 import time
 
 class UserBased():
-    def __init__(self, matrix, user_list, item_list):
+    def __init__(self, matrix, user_list, item_list, sim_mat = None, related_users = None):
+        # train matirx
         self.matrix = matrix
 		self.user_list = user_list
 		self.item_list = item_list
-
-	# compute the user_item matrix
-    # integrate the bought times
-    # split dataset into train/test
-    # train: before 2014
-    # test: 2014
-    def purchase_matrix(data_dic, user_list, item_list):
-        print "function purchase_matrix"
-        rows = len(user_list)
-        cols = len(item_list)
-        train = []
-        test = []
-        for i in range(rows):
-            u_train = [0] * cols
-            u_test = [0] * cols
-            uid = user_list[i]
-            if data_dic.has_key(uid):
-                for t in data_dic[uid]:
-                    if t[1].find("2014") == -1:
-                        u_train[ t[0] ] = 1
-                    else:
-                        #u_train[ t[0] ] = 1
-                        u_test[ t[0] ] = 1
-            train.append( u_train )
-            test.append( u_test )
-        return [train, test]
 
     # find the TOP-3 highest similarity users for each item , and overall
     def refer_user(matrix, sim_mat, user_list, ten_offering):
@@ -66,20 +41,20 @@ class UserBased():
                     u_refer.append( str(user_list[u[0]]) )
                 print "%s\t%s"%(str(uid), ','.join(u_refer))
 
-    def user_similarity(matrix, item_index):
+    def user_similarity(self):
         print "function user_similarity"
         start = time.time()
-        rows = len(matrix)
-        cols = len(matrix[0])
+        rows = len(self.matrix)
+        cols = len(self.matrix[0])
         mat = []
         for i in range(rows):
             u_sim = [0] * rows
-            if sum( matrix[i] ) < 0.1:
+            if sum( self.matrix[i] ) < 0.1:
                 mat.append(u_sim)
                 continue
             for j in range(i + 1, rows):
-                user_a = matrix[i]
-                user_b = matrix[j]
+                user_a = self.matrix[i]
+                user_b = self.matrix[j]
                 if sum( user_a ) < 0.1 and sum( user_b ) < 0.1:
                     continue
                 sim = 0
@@ -95,26 +70,25 @@ class UserBased():
             mat.append(u_sim)
         end = time.time()
         print str( end - start ) + ' seconds'
-        return mat
+        self.sim_mat = mat
 
-    def related_users(user_sim, K):
+    def related_users(self, K):
         print "function related_users"
         start = time.time()
         related = {}
         rows = len(user_sim)
         for i in range( rows ):
             u_sim = {}
-            for x in range(len(user_sim[i])):
-                u_sim[x] = user_sim[i][x]
+            for x in range(len(self.sim_mat[i])):
+                u_sim[x] = self.sim_mat[i][x]
             u_sim = sorted(u_sim.items(), key = lambda d: -d[1])[:K]
             related[i] = u_sim
         end = time.time()
         print str( end - start ) + ' seconds'
-        return related
+        self.related_users = related
 
 
-
-    def predict_user_based(matrix, related_users):
+    def predict_user_based():
         print "function predict_user_based"
         start = time.time()
         rows = len(matrix)

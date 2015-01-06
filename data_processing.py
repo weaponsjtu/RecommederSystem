@@ -49,3 +49,34 @@ class PreProcessing():
         end = time.time()
         print str( end - start ) + ' seconds'
         return [data_dic, user_list, item_list, user_profile_dic, item_profile_dic]
+
+	# compute the user_item matrix
+    # integrate the bought times
+    # split dataset into train/test
+    # train: before 2014
+    # test: 2014
+    def purchase_matrix(data_dic, user_list, item_list):
+        print "function purchase_matrix"
+        rows = len(user_list)
+        cols = len(item_list)
+        train = []
+        test = []
+        for i in range(rows):
+            u_train = [0] * cols
+            u_test = [0] * cols
+            uid = user_list[i]
+            if data_dic.has_key(uid):
+                for t in data_dic[uid]:
+                    if t[1].find("2014") == -1:
+                        u_train[ t[0] ] = 1
+                    else:
+                        #u_train[ t[0] ] = 1
+                        u_test[ t[0] ] = 1
+            train.append( u_train )
+            test.append( u_test )
+        return [train, test]
+
+class ExcelTool():
+    def __init__(self):
+        pass
+

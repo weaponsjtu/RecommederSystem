@@ -29,6 +29,12 @@ Requirements: Python>=2.7, matplotlib, PyExcel
    - def set\_data( matrix )
    - def sort\_by\_row( matrix )
    - def sort\_by\_col( matrix )    
+2. **class** User
+   - def get()
+   - def set()
+3. **class** Item
+   - def get()
+   - def set()
 
 ### Recommender
 
@@ -53,13 +59,13 @@ Requirements: Python>=2.7, matplotlib, PyExcel
 ### Graph Tool
 
 1. **class** GraphTool
-   - def plot_pr ()
-   - def plot_roc ()
+   - def plot\_pr ()
+   - def plot\_roc ()
 
 ### Utils
 
 1. **class** Utils 
-   - def similarity( vector_a, vector_b )
+   - def similarity( vector\_a, vector\_b )
 
 ## How to Use
 
