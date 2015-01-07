@@ -1,44 +1,43 @@
 import math
-import sys
 import time
 
 class UserBased():
-    def __init__(self, matrix, user_list, item_list, sim_mat = None, related_users = None):
+    def __init__(self, matrix, user_list, item_list, sim_mat = None, related_users = None, user_item_mat = None):
         # train matirx
         self.matrix = matrix
 		self.user_list = user_list
 		self.item_list = item_list
 
     # find the TOP-3 highest similarity users for each item , and overall
-    def refer_user(matrix, sim_mat, user_list, ten_offering):
+    def refer_user(self, ten_offering):
         # TOP-3 highest similarity users
         print "Overall\t"
-        for i in range( len(user_list) ):
-            uid = user_list[i]
-            u_sim = sim_mat[i]
+        for i in range( len(self.user_list) ):
+            uid = self.user_list[i]
+            u_sim = self.sim_mat[i]
             u_sim_dic = {}
             for u in range( len(u_sim) ):
                 u_sim_dic[u] = u_sim[u]
             u_sim = sorted(u_sim_dic.items(), key = lambda d: -d[1])[:3]
             u_refer = []
             for u in u_sim:
-                u_refer.append( str(user_list[u[0]]) )
+                u_refer.append( str(self.user_list[u[0]]) )
             print "%s\t%s"%(str(uid), ','.join(u_refer))
 
         # TOP-3 highest similarity users for each item
         for item_index in ten_offering:
             print str(item_index) + '\t'
             for i in range( len(user_list) ):
-                uid = user_list[i]
-                u_sim = sim_mat[i]
+                uid = self.user_list[i]
+                u_sim = self.sim_mat[i]
                 u_sim_dic = {}
                 for u in range( len(u_sim) ):
-                    if matrix[u][ item_index - 1 ] > 0:
+                    if self.matrix[u][ item_index - 1 ] > 0:
                         u_sim_dic[u] = u_sim[u]
                 u_sim = sorted(u_sim_dic.items(), key = lambda d: -d[1])[:3]
                 u_refer = []
                 for u in u_sim:
-                    u_refer.append( str(user_list[u[0]]) )
+                    u_refer.append( str(self.user_list[u[0]]) )
                 print "%s\t%s"%(str(uid), ','.join(u_refer))
 
     def user_similarity(self):
@@ -91,32 +90,19 @@ class UserBased():
     def predict_user_based():
         print "function predict_user_based"
         start = time.time()
-        rows = len(matrix)
-        cols = len(matrix[0])
+        rows = len(self.matrix)
+        cols = len(self.matrix[0])
 
         # user item matrix, probability
         user_item_mat = []
         for i in range(rows):
             u_item = [0] * cols
             for j in range(cols):
-                # based on rules
-                #flag = 0
-                #if offering_dic is not None and rules_dic is not None and rules_dic.has_key( item_dic[j + 1] ):
-                #    rules = rules_dic[ item_dic[j + 1] ]
-                #    for rule in rules:
-                #        if offering_dic.has_key(rule) and matrix[i][ offering_dic[rule] - 1 ] == 1 and matrix[i][j] == 0:
-                #            u_item[j] = 1.0
-                #            flag = 1
-                #            break
-
-                #if flag == 1:
-                #    continue
-
                 # based on user-similarity
-                u_sim = related_users[i]
+                u_sim = self.related_users[i]
                 sum_u_sim = 0
                 for sim in u_sim:
-                    u_item[j] = u_item[j] + sim[1] * matrix[ sim[0] ][j]
+                    u_item[j] = u_item[j] + sim[1] * self.matrix[ sim[0] ][j]
                     sum_u_sim = sum_u_sim + sim[1]
                 if sum_u_sim > 0:
                     u_item[j] = u_item[j] * 1.0 / sum_u_sim
@@ -124,7 +110,7 @@ class UserBased():
         #for each item, we get a user ranking list
         end = time.time()
         print str( end - start ) + ' seconds'
-        return user_item_mat
+        self.user_item_mat = user_item_mat
 
 
     def ranking_users( user_item_mat, item_index ):
@@ -133,15 +119,15 @@ class UserBased():
 
 
 class ItemBased():
-    def __init__(self, matrix, user_list, item_list):
+    def __init__(self, matrix, user_list, item_list, item_sim = None, related_items = None, user_item_mat = None):
         self.matrix = matrix
         self.user_list = user_list
         self.item_list = item_list
 
-    def item_similarity():
+    def item_similarity(self):
         print "function item_similarity"
-        rows = len(matrix)
-        cols = len(matrix[0])
+        rows = len(self.matrix)
+        cols = len(self.matrix[0])
         mat = []
         for i in range(cols):
             i_sim = [0] * cols
@@ -150,60 +136,46 @@ class ItemBased():
                 user_b = []
                 sim = 0
                 for k in range(rows):
-                    user_a.append(matrix[k][i])
-                    user_b.append(matrix[k][j])
-                    sim = sim + matrix[k][i] * matrix[k][j]
+                    user_a.append(self.matrix[k][i])
+                    user_b.append(self.matrix[k][j])
+                    sim = sim + self.matrix[k][i] * self.matrix[k][j]
                 if sim > 0:
                     sim = sim * 1.0 / ( math.sqrt( sum(user_a) )  * math.sqrt( sum(user_b) ) )
                 i_sim[j] = sim
             for j in range(0, i):
                 i_sim[j] = mat[j][i]
             mat.append(i_sim)
-        return mat
+        self.sim_mat = mat
 
 
-    def related_items( item_sim, K ):
+    def related_items(self, K):
         related = {}
-        rows = len( item_sim )
+        rows = len( self.item_sim )
         for i in range( rows ):
             i_sim = {}
-            for x in range(len(item_sim[j])):
-                i_sim[x] = item_sim[j][x]
+            for x in range(len(self.item_sim[j])):
+                i_sim[x] = self.item_sim[j][x]
             i_sim = sorted(i_sim.items(), key = lambda d: -d[1])[:K]
             related[i] = i_sim
-        return related
+        self.related_items = related
 
-
-    def predict_item_based( related_items ):
+    def predict_item_based(self):
         print "function predict_item_based"
-        rows = len(matrix)
-        cols = len(matrix[0])
+        rows = len(self.matrix)
+        cols = len(self.matrix[0])
 
         # user item matrix, probability
         user_item_mat = []
         for i in range(rows):
             i_item = [0] * cols
             for j in range(cols):
-                # based on rules
-                #flag = 0
-                #if offering_dic is not None and rules_dic is not None and rules_dic.has_key( item_dic[j + 1] ):
-                #    rules = rules_dic[ item_dic[j + 1] ]
-                #    for rule in rules:
-                #        if offering_dic.has_key(rule) and matrix[i][ offering_dic[rule] - 1 ] == 1 and matrix[i][j] == 0:
-                #            u_item[j] = 1.0
-                #            flag = 1
-                #            break
-
-                #if flag == 1:
-                #    continue
-
-                i_sim = related_items[i]
+                i_sim = self.related_items[i]
                 sum_i_sim = 0
                 for sim in i_sim:
-                    i_item[j] = i_item[j] + sim[1] * matrix[i][ sim[0] ]
+                    i_item[j] = i_item[j] + sim[1] * self.matrix[i][ sim[0] ]
                     sum_i_sim += sim[1]
                 if sum_i_sim > 0:
                     i_item[j] = i_item[j] * 1.0 / sum_i_sim
             user_item_mat.append(i_item)
         #for each item, we get a user ranking list
-        return user_item_mat
+        self.user_item_mat = user_item_mat

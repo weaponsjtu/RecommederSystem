@@ -1,6 +1,19 @@
-# Code Docdument for Recommendation System
+# Code Base of IBM CRL Sales' Recommendation System
 
 This document will describe the code base for Recommendation System (RS) project of Sales Science Team. We implemented basic RS algorithms, including user-based, item-based, content-based, SVD, etc. For the convenience communication, we use Python language. This code base is composed of six modules, data processing, data model, recommenders, evaluation, graph tools, etc.
+
+## Data Source Format
+
+**Excel or TAB seperated text file**
+
+Each record contains:
+
+1. Client profile (id, name, type, country, etc)
+2. IBM Product profile (id, pillar, category, brand, etc)
+3. Purchase Info (price, time, etc)
+
+
+
 
 ## Code Architecture
 
@@ -11,7 +24,7 @@ This document will describe the code base for Recommendation System (RS) project
 5. Graph Tool (ROC, PR curve)
 6. Utils (Similarity, etc)
 
-Requirements: Python>=2.7, matplotlib, PyExcel
+**Requirements: Python>=2.7, matplotlib, PyExcel**
 
 ## Module API
 
@@ -28,7 +41,7 @@ Requirements: Python>=2.7, matplotlib, PyExcel
 1. **class** MatrixModel
    - def set\_data( matrix )
    - def sort\_by\_row( matrix )
-   - def sort\_by\_col( matrix )    
+   - def sort\_by\_col( matrix )
 2. **class** User
    - def get()
    - def set()
