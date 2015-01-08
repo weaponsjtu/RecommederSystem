@@ -1,6 +1,8 @@
-# Code Docdument for Recommendation System
+# Code Document for Recommendation System
 
-This document will describe the code base for Recommendation System (RS) project of Sales Science Team. We implemented basic RS algorithms, including user-based, item-based, content-based, SVD, etc. For the convenience communication, we use Python language. This code base is composed of six modules, data processing, data model, recommenders, evaluation, graph tools, etc.
+This document will describe the code base for Recommendation System (RS) project of Sales Science Team. We implemented basic RS algorithms, including user-based, item-based, content-based, SVD, etc. For the convenience communication, we use Python language. This code base is composed of six modules, including data processing, data model, recommenders, evaluation, graph tools, utils, etc.
+
+If you have any suggestion, please contact me (javawebzwp AT gmail DOT com).
 
 ## Code Architecture
 
@@ -11,7 +13,7 @@ This document will describe the code base for Recommendation System (RS) project
 5. Graph Tool (ROC, PR curve)
 6. Utils (Similarity, etc)
 
-Requirements: Python>=2.7, matplotlib, PyExcel
+**Library Requirements: Python>=2.7, matplotlib, PyExcel**
 
 ## Module API
 
@@ -27,8 +29,17 @@ Requirements: Python>=2.7, matplotlib, PyExcel
 
 1. **class** MatrixModel
    - def set\_data( matrix )
+   - def split\_data( matrix, train\_conf, test\_conf )
+   - def is\_train\_sample( date )
+   - def is\_test\_sample( date )
    - def sort\_by\_row( matrix )
-   - def sort\_by\_col( matrix )    
+   - def sort\_by\_col( matrix )
+2. **class** User
+   - def get\_attr()
+   - def set\_attr()
+3. **class** Item
+   - def get\_attr()
+   - def set\_attr()
 
 ### Recommender
 
@@ -41,6 +52,7 @@ Requirements: Python>=2.7, matplotlib, PyExcel
    - def related\_items( item\_sim, K )
    - def predict( matrix, related\_items )
 3. **class** SVD
+   - def matrix\_factorization( matrix )
 4. **class** ContentBased
 
 ### Evaluation
@@ -49,30 +61,27 @@ Requirements: Python>=2.7, matplotlib, PyExcel
    - def eval\_f1( results, test\_data )
    - def eval\_roc( results, test\_data )
    - def eval\_ndcg( results, test\_data )
+   - def percent( scores, labels, K, N )
 
 ### Graph Tool
 
 1. **class** GraphTool
-   - def plot_pr ()
-   - def plot_roc ()
+   - def plot\_pr ()
+   - def plot\_roc ()
 
 ### Utils
 
 1. **class** Utils 
-   - def similarity( vector_a, vector_b )
+   - def file2dic( file )
+   - def similarity( vector\_a, vector\_b )
+   - def save_evaluation( eval\_result, file\_name )
+   - def save_ranking( rank\_dic, file\_name )
 
 ## How to Use
-
-example
+ITS example
 
 ## Code Repository
-
 GMU machine
 
 ## About Us
-
-Sales Science Team of IBM CRL
-
-Manager: Stephen Chu
-
-Author: Weipeng Zhang
+Author: Dongsheng Li, Jin Huang, Weipeng Zhang
